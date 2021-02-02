@@ -1,0 +1,78 @@
+from textblob import TextBlob
+import numpy as np
+import requests
+import pandas as pd
+import nltk
+demo = 'your api key'
+company = 'AAPL'
+
+transcript = requests.get(f'https://financialmodelingprep.com/api/v3/earning_call_transcript/{company}?quarter=3&year=2020&apikey={demo}').json()
+
+transcript = transcript[0]['content']
+print(transcript)
+
+#outcome
+Operator: Good day, everyone.
+Welcome to the Apple Incorporated Third Quarter Fiscal Year 2020 Earnings Conference Call.
+Good afternoon and thank you for joining us.
+Good afternoon, everyone.
+We've lost a hero who walked among us, a leader in the truest sense who urged this country to aim higher and be better until the very end.
+I was humbled and for....
+
+sentiment_call = TextBlob(transcript)
+
+
+print(sentiment_call.sentiment)
+#outcome
+Sentiment(polarity=0.16686529115695806, subjectivity=0.462708070083069)
+
+print(sentiment_call.sentences)
+#outcome
+[Sentence("Operator: Good day, everyone."),
+ Sentence("Welcome to the Apple Incorporated Third Quarter Fiscal Year 2020 Earnings Conference Call."),
+ Sentence("Today's call is being recorded."),
+ Sentence("At this time, for opening remarks and introductions, I would like to turn things over to Mr. Tejas Gala, Senior Manager, Corporate Finance and Investor Relations."),
+ Sentence("Please go ahead, sir."),
+ Sentence("Tejas Gala: Thank you."),
+ Sentence("Good afternoon and thank you for joining us."),
+ Sentence("Speaking first today is App
+
+sentiment_call.sentences
+negative = 0
+positive = 0
+neutral = 0
+all_sentences = []
+
+for sentence in sentiment_call.sentences:
+  #print(sentence.sentiment.polarity)
+  if sentence.sentiment.polarity < 0:
+    negative +=1
+  if sentence.sentiment.polarity > 0:
+    positive += 1
+  else:
+    neutral += 1
+ 
+  all_sentences.append(sentence.sentiment.polarity) 
+
+print('positive: ' +  str(positive))
+print('negative: ' +  str(negative))
+print('neutral: ' + str(neutral))
+
+#outcome:
+positive: 218
+negative: 51
+neutral: 207
+
+all_sentences = np.array(all_sentences)
+print('sentence polarity: ' + str(all_sentences.mean()))
+#outcome
+sentence polarity: 0.15182078480887307
+
+for sentence in sentiment_call.sentences:
+  if sentence.sentiment.polarity > 0.8:
+     print(sentence)
+
+#outcome
+- iPad performance was equally impressive with revenue of $6.6 billion, up 31% and our highest June quarter revenue in eight years.
+- Amit Daryanani: Perfect, that's helpful.
+- We believe based on what we've heard that it's the fastest rollout in the history of credit cards and so we feel very good about that.
